@@ -1,58 +1,51 @@
-from flask import Blueprint, request, jsonify
-from app.config import db
-from app.models import Event
+from flask_restful import Resource
+from flask import request, jsonify
+from app import db 
+from app.models.event import Event
 
-event_bp = Blueprint('event_bp', __name__)
+class EventResource(Resource):
+    def get(self, id_event=None):
+        if id_event:
+            event = Event.query.get(id_event)
+            if event:
+                return event.to_dict()
+            return {'error': 'Evento no encontrado'}, 404
+        
+        events = Event.query.all()
 
-@event_bp.route('/', methods=['GET'])
-def get_events():
-    events = Event.query.all()
-    return jsonify([event.to_dict() for event in events])
+        if not events:
+            return {'message': 'No hay eventos'}, 200
 
-@event_bp.route('/<int:id>', methods=['GET'])
-def get_event(id):
-    event = Event.query.get(id)
-    if event:
-        return jsonify(event.to_dict())
-    return jsonify({'error': 'Event not found'}), 404
-
-@event_bp.route('/', methods=['POST'])
-def create_event():
-    data = request.get_json()
-    new_event = Event(
-        tittle=data['tittle'],
-        date=data['date'],
-        description=data['description'],
-        location=data['location'],
-    )
-    db.session.add(new_event)
-    db.session.commit()
-    return jsonify(new_event.to_dict()), 201
-
-@event_bp.route('/<int:id>', methods=['PUT'])
-def update_event(id):
-    event = Event.query.get(id)
-
-    if not event:
-        return jsonify({'error': 'Event not found'}), 404
-    else:
-        data = request.get_json()
-        event.tittle = data['tittle']
-        event.date = data['date']
-        event.description = data['description']
-        event.location = data['location']
-
-        db.session.commit()
-        return jsonify(event.to_dict())
+        return [event.to_dict() for event in events]
     
-@event_bp.route('/<int:id>', methods=['DELETE'])
-def delete_event(id):
-    event = Event.query.get(id)
-    if not event:
-        return jsonify({'error': 'Event not found'}), 404
-    else:
-        db.session.delete(event)
+    def post(self):
+        data = request.json
+        new_event = Event(
+            title_event=data['title_event'],
+            date_event=data['date_event'],
+            description_event=data['description_event'],
+            location_event=data['location_event'],
+        )
+        db.session.add(new_event)
         db.session.commit()
-        return jsonify({'message': 'Event deleted'})
-
-    
+        return jsonify(new_event.to_dict()), 201
+    def put(self, id_event):
+        event = Event.query.get(id_event)
+        if not event:
+            return jsonify({'error': 'Evento no encontrado'}), 404
+        else:
+            data = request.json
+            event.title_event = data['title_event']
+            event.date_event = data['date_event']
+            event.description_event = data['description_event']
+            event.location_event = data['location_event']
+            db.session.commit()
+            return jsonify(event.to_dict())
+    def delete(self, id_event):
+        event = Event.query.get(id_event)
+        if not event:
+            return jsonify({'error': 'Evento no encontrado'}), 404
+        else:
+            db.session.delete(event)
+            db.session.commit()
+            return jsonify({'message': 'Evento eliminado'}), 200

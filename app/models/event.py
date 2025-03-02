@@ -1,19 +1,17 @@
-from app.config import db
+from app import db
 
 class Event(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tittle = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    location = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    # capacity = db.Column(db.Integer, nullable=False)
-    # attendees = db.relationship('Attendee', backref='event', lazy=True)
-    
+    id_event = db.Column(db.Integer, primary_key=True)
+    title_event = db.Column(db.String(150), nullable=False)
+    date_event = db.Column(db.Date, nullable=False)
+    description_event = db.Column(db.Text, nullable=False)
+    location_event = db.Column(db.String(150), nullable=False)
+
     def to_dict(self):
         return {
-            'id': self.id,
-            'tittle': self.tittle,
-            'date': self.date,
-            'description': self.description,
-            'location': self.location
+            'id_event': self.id_event,
+            'title_event': self.title_event,
+            'date_event': self.date_event,
+            'description_event': self.description_event,
+            'location_event': self.location_event
         }
