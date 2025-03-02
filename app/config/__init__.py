@@ -1,0 +1,18 @@
+from flask import Flask 
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+from app.config.config import Config
+
+db = SQLAlchemy()
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    db.init_app(app)
+    CORS(app)
+    
+    from app.routes.event_routes import event_bp
+    app.register_blueprint(event_bp, url_prefix='/events')
+    
+    return app
