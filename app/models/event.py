@@ -11,7 +11,7 @@ class Event(db.Model):
         return {
             'id_event': self.id_event,
             'title_event': self.title_event,
-            'date_event': self.date_event,
+            'date_event': self.date_event.strftime('%Y-%m-%d'),
             'description_event': self.description_event,
             'location_event': self.location_event
         }

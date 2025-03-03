@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from app.config.config import Config
@@ -11,8 +11,8 @@ def create_app():
 
     db.init_app(app)
     CORS(app)
-    
+
     from app.routes.api import register_api
     register_api(app)
-    
+
     return app
